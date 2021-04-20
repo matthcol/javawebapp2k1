@@ -1,22 +1,23 @@
-package servlet;
+package servlets;
 
 import java.io.IOException;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Servlet implementation class HelloServlet
+ * Servlet implementation class Bonjour
  */
-public class HelloServlet extends HttpServlet {
+@WebServlet("/Bonjour")
+public class Bonjour extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-       
+
     /**
-     * @see HttpServlet#HttpServlet()
+     * Default constructor. 
      */
-    public HelloServlet() {
-        super();
+    public Bonjour() {
         // TODO Auto-generated constructor stub
     }
 
@@ -25,9 +26,7 @@ public class HelloServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		response.getWriter()
-				.append("GET Served at: ")
-				.append(request.getContextPath());
+		response.getWriter().append("Served at: ").append(request.getContextPath());
 	}
 
 	/**
@@ -35,9 +34,7 @@ public class HelloServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		response.getWriter()
-				.append("POST Served at: ")
-				.append(request.getContextPath());
+		doGet(request, response);
 	}
 
 }
