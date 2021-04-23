@@ -6,7 +6,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Hello GoodBye 東京</title>
+<title>Hello GoodBye</title>
 </head>
 <body>
 <h1>${title}</h1>
