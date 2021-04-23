@@ -48,7 +48,15 @@ public class Movie {
 		this.duration = duration;
 	}
 	
-	
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append(title)
+			.append(" (")
+			.append(year)
+			.append(")");
+		return builder.toString();
+	}
 	
 
 }

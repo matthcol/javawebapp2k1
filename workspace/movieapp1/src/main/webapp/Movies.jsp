@@ -11,8 +11,8 @@
 <p>
 <h1>Movies</h1>
 <ul>
-<c:forEach items="${movies}" var="movie">
-	<li>${m.title} (${m.year})
+<c:forEach items="${movies}" var="m">
+	<li>${m} : ${m.title} (${m.year})
 </c:forEach>
 </ul>
 </p>

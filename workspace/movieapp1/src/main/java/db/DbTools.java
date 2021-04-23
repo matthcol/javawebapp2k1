@@ -8,6 +8,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import javax.sql.DataSource;
+
+import org.mariadb.jdbc.MariaDbDataSource;
+import org.postgresql.ds.PGSimpleDataSource;
+
 import data.Movie;
 
 import java.io.IOException;
@@ -21,6 +26,8 @@ public class DbTools {
 	private static String url = null;
 	private static String user = null;
 	private static String password = null;
+	private static String provider = null;
+	private static DataSource datasource = null;
 	
 	private final static String SQL_ALL_MOVIES = "select * from movies";
 	private final static String SQL_ADD_MOVIE = "insert into movies (title,year) values (?,?)";
@@ -35,13 +42,22 @@ public class DbTools {
 			url = properties.getProperty("datasource.url");
 			user = properties.getProperty("datasource.user");
 			password = properties.getProperty("datasource.password");
+			provider = properties.getProperty("datasource.provider");
+			if (provider.equals("mariadb")){
+				datasource = new MariaDbDataSource(url);
+			} else if (provider.equals("postgresql")) {
+				PGSimpleDataSource ds = new PGSimpleDataSource();
+				ds.setUrl(url);
+			} else {
+				throw new IllegalArgumentException("JDBC provider unknown");
+			}
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
 	
 	public static List<Movie> readMovies() {
-		try (var connection = DriverManager.getConnection(url, user, password)) {
+		try (var connection = datasource.getConnection(user, password)) {
 			var movies = new ArrayList<Movie>();
 			var st = connection.createStatement();
 			var res = st.executeQuery(SQL_ALL_MOVIES);
