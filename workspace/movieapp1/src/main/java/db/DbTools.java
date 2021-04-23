@@ -70,7 +70,7 @@ public class DbTools {
 	}
 	
 	public static Connection getConnection() throws SQLException {
-		if (provider.equals("jndi") && (user==null)) {
+		if (provider.equals("jndi")) {
 			return datasource.getConnection();
 		} else {
 			return datasource.getConnection(user, password);
@@ -95,12 +95,11 @@ public class DbTools {
 	}
 	
 	public static void addMovie(Movie movie) {
-		try (var connection = datasource.getConnection(user, password)) {
+		try (var connection = getConnection()) {
 			var st = connection.prepareStatement(SQL_ADD_MOVIE);
 			st.setString(1, movie.getTitle());
 			st.setInt(2, movie.getYear());
 			st.executeUpdate();
-			connection.commit();
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
