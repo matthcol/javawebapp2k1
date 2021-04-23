@@ -99,7 +99,8 @@ public class DbTools {
 			var st = connection.prepareStatement(SQL_ADD_MOVIE);
 			st.setString(1, movie.getTitle());
 			st.setInt(2, movie.getYear());
-			
+			st.executeUpdate();
+			connection.commit();
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
