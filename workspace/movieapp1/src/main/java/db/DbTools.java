@@ -2,12 +2,15 @@ package db;
 
 import java.io.Reader;
 import java.net.URISyntaxException;
+import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.sql.DataSource;
 
 import org.mariadb.jdbc.MariaDbDataSource;
@@ -28,6 +31,7 @@ public class DbTools {
 	private static String password = null;
 	private static String provider = null;
 	private static DataSource datasource = null;
+	private static String jndiDataSourceName = null;
 	
 	private final static String SQL_ALL_MOVIES = "select * from movies";
 	private final static String SQL_ADD_MOVIE = "insert into movies (title,year) values (?,?)";
@@ -43,11 +47,20 @@ public class DbTools {
 			user = properties.getProperty("datasource.user");
 			password = properties.getProperty("datasource.password");
 			provider = properties.getProperty("datasource.provider");
+			jndiDataSourceName = properties.getProperty("datasource.jndi");
 			if (provider.equals("mariadb")){
 				datasource = new MariaDbDataSource(url);
 			} else if (provider.equals("postgresql")) {
 				PGSimpleDataSource ds = new PGSimpleDataSource();
 				ds.setUrl(url);
+				datasource = ds;
+			} else if (provider.equals("jndi")) {
+				try {
+					InitialContext ctx = new InitialContext();
+					datasource = (DataSource)ctx.lookup(jndiDataSourceName);
+				} catch (NamingException e) {
+					throw new RuntimeException(e);
+				}
 			} else {
 				throw new IllegalArgumentException("JDBC provider unknown");
 			}
@@ -56,8 +69,16 @@ public class DbTools {
 		}
 	}
 	
+	public static Connection getConnection() throws SQLException {
+		if (provider.equals("jndi") && (user==null)) {
+			return datasource.getConnection();
+		} else {
+			return datasource.getConnection(user, password);
+		}
+	}
+	
 	public static List<Movie> readMovies() {
-		try (var connection = datasource.getConnection(user, password)) {
+		try (var connection = getConnection()) {
 			var movies = new ArrayList<Movie>();
 			var st = connection.createStatement();
 			var res = st.executeQuery(SQL_ALL_MOVIES);
@@ -68,6 +89,17 @@ public class DbTools {
 				movies.add(movie);
 			}
 			return movies;
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	public static void addMovie(Movie movie) {
+		try (var connection = datasource.getConnection(user, password)) {
+			var st = connection.prepareStatement(SQL_ADD_MOVIE);
+			st.setString(1, movie.getTitle());
+			st.setInt(2, movie.getYear());
+			
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}

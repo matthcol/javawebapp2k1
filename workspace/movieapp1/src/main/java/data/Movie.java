@@ -10,6 +10,10 @@ public class Movie {
 	public Movie() {
 	}
 	
+	public Movie(String title, Integer year) {
+		this(title, year, null);
+	}
+	
 	public Movie(String title, Integer year, Integer duration) {
 		this.title = title;
 		this.year = year;
