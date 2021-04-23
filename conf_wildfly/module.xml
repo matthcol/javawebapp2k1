@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module name="org.mariadb.jdbc" xmlns="urn:jboss:module:1.9">
+
+    <resources>
+        <resource-root path="mariadb-java-client-2.7.2.jar"/>
+    </resources>
+
+    <dependencies>
+        <module name="java.sql"/>
+        <module name="javax.transaction.api"/>
+    </dependencies>
+</module>
